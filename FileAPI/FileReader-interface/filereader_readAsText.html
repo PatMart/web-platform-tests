@@ -12,46 +12,38 @@
     <div id="log"></div>
 
     <script>
+    async_test(function() {
       var blob = new Blob(["TEST"]);
       var reader = new FileReader();
-      var reader_UTF16 = new FileReader();
 
-      setup({explicit_done: true});
-
-      on_event(reader, "load", function() {
-        test(function() {
-          assert_equals(typeof reader.result, "string", "The result is typeof string");
-        }, "Check if the result is typeof string");
-
-        test(function() {
-          assert_equals(reader.result, "TEST", "The result is TEST");
-        }, "Check if the readAsText method returns text");
-
-        reader_UTF16.readAsText(blob, "UTF-16");
+      reader.onload = this.step_func(function(evt) {
+        assert_equals(typeof reader.result, "string", "The result is typeof string");
+        assert_equals(reader.result, "TEST", "The result is TEST");
+        this.done();
       });
 
-      on_event(reader, "loadstart", function() {
-        test(function() {
-          assert_equals(reader.readyState, reader.LOADING, "The readyState");
-        }, "Check if the readyState is LOADING when load will start");
+      reader.onloadstart = this.step_func(function(evt) {
+        assert_equals(reader.readyState, reader.LOADING, "The readyState");
       });
 
-      on_event(reader, "progress", function() {
-        test(function() {
-          assert_equals(reader.readyState, reader.LOADING, "The readyState");
-        }, "Check if the readyState is LOADING when read progress");
-      });
-
-      on_event(reader_UTF16, "load", function() {
-        test(function() {
-          assert_equals(reader_UTF16.readyState, reader.DONE, "The readyState");
-          assert_not_equals(reader_UTF16.result, "TEST", "The result is not TEST");
-        }, "Check if the readAsText method returns string with encoding is UTF-16");
-
-        done();
+      reader.onprogress = this.step_func(function(evt) {
+        assert_equals(reader.readyState, reader.LOADING);
       });
 
       reader.readAsText(blob);
+    }, "readAsText should correctly read UTF-8.");
+
+    async_test(function() {
+      var blob = new Blob(["TEST"]);
+      var reader = new FileReader();
+      var reader_UTF16 = new FileReader();
+      reader_UTF16.onload = this.step_func(function(evt) {
+        assert_equals(reader_UTF16.readyState, reader.DONE, "The readyState");
+        assert_not_equals(reader_UTF16.result, "TEST", "The result is not TEST");
+        this.done();
+      });
+      reader_UTF16.readAsText(blob, "UTF-16");
+    }, "readAsText should correctly read UTF-16.");
     </script>
   </body>
 </html>
