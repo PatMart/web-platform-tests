@@ -12,32 +12,23 @@
     <div id="log"></div>
 
     <script>
+    async_test(function() {
       var blob = new Blob(["THIS TEST THE READYSTATE WHEN READ BLOB"]);
       var reader = new FileReader();
-      var readyState = reader.readyState;
 
-      setup({explicit_done: true});
-      setup({explicit_timeout: true});
+      assert_equals(reader.readyState, reader.EMPTY);
 
-      test(function() {
-        assert_equals(reader.readyState, reader.EMPTY, "The readyState is " + reader.EMPTY);
-      }, "Check if the readyState is EMPTY when no read invoked");
-
-      on_event(reader, "loadstart", function() {
-        test(function() {
-          assert_equals(reader.readyState, reader.LOADING, "The readyState is " + reader.LOADING);
-        }, "Check if the readyState is LOADING when reading blob");
+      reader.onloadstart = this.step_func(function(evt) {
+        assert_equals(reader.readyState, reader.LOADING);
       });
 
-      on_event(reader, "loadend", function() {
-        test(function() {
-          assert_equals(reader.readyState, reader.DONE, "The readyState is " + reader.DONE);
-        }, "Check if the readyState is DONE when the entire File or Blob has been read into memory");
-
-        done();
+      reader.onloadend = this.step_func(function(evt) {
+        assert_equals(reader.readyState, reader.DONE);
+        this.done();
       });
 
       reader.readAsDataURL(blob);
+    });
     </script>
   </body>
 </html>
