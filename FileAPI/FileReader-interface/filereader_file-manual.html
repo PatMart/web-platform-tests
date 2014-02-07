@@ -19,7 +19,7 @@
     </div>
 
     <form name="uploadData">
-      <input type="file" id="fileChooser"></input>
+      <input type="file" id="fileChooser">
     </form>
 
     <div id="log"></div>
@@ -30,8 +30,10 @@
       //readType: 1-> ArrayBuffer, 2-> Text, 3-> DataURL
       var readType = 1;
 
-      setup({explicit_done: true});
-      setup({explicit_timeout: true});
+      setup({
+        explicit_done: true,
+        explicit_timeout: true,
+      });
 
       on_event(fileInput, "change", function(evt) {
         reader.readAsArrayBuffer(fileInput.files[0]);

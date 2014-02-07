@@ -19,7 +19,7 @@
     </div>
 
     <form name="uploadData">
-      <input type="file" id="fileChooser"></input>
+      <input type="file" id="fileChooser">
     </form>
 
     <div id="log"></div>
@@ -27,8 +27,10 @@
       var fileInput = document.querySelector('#fileChooser');
       var reader = new FileReader();
 
-      setup({explicit_done: true});
-      setup({explicit_timeout: true});
+      setup({
+        explicit_done: true,
+        explicit_timeout: true,
+      });
 
       fileInput.addEventListener("change", function(evt) {
         reader.readAsDataURL(fileInput.files[0]);
